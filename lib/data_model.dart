@@ -1,0 +1,30 @@
+class Product {
+  int id;
+  String name, image;
+  double price;
+
+  String get imageURL =>
+      "https://firtman.github"
+      ".io/coffeemasters/api/images/$image";
+
+  Product({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.image,
+  });
+}
+
+class Category {
+  String name;
+  List<Product> products;
+
+  Category({required this.name, required this.products});
+}
+
+class ItemInCart {
+  Product product;
+  int qty;
+
+  ItemInCart({required this.product, required this.qty});
+}
