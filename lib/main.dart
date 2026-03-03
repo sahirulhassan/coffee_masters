@@ -1,3 +1,4 @@
+import 'package:coffee_masters/data_manager.dart';
 import 'package:coffee_masters/pages/menu_page.dart';
 import 'package:coffee_masters/pages/orders_page.dart';
 import 'pages/offers_page.dart';
@@ -33,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  var dataManager = DataManager();
   int selectedIndex = 0;
 
   @override
@@ -61,7 +63,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: IndexedStack(
         index: selectedIndex,
-        children: const [MenuPage(), OffersPage(), OrdersPage()],
+        children: [
+          MenuPage(dataManager: dataManager),
+          const OffersPage(),
+          OrdersPage(dataManager: dataManager),
+        ],
       ),
       bottomNavigationBar: navigationBar,
     );

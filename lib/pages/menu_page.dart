@@ -1,35 +1,60 @@
+import 'package:coffee_masters/data_manager.dart';
 import 'package:flutter/material.dart';
 
 import '../data_model.dart';
 
 class MenuPage extends StatelessWidget {
-  const MenuPage({super.key});
+  final DataManager dataManager;
+
+  const MenuPage({super.key, required this.dataManager});
 
   @override
   Widget build(BuildContext context) {
-    var product = Product(
-      id: 0,
-      name: "Espresso",
-      price: 1.99,
-      image: "espresso.png",
-    );
-    return ListView(
-      children: [
-        ProductItem(product: product),
-        ProductItem(product: product),
-        ProductItem(product: product),
-        ProductItem(product: product),
-        ProductItem(product: product),
-        ProductItem(product: product),
-      ],
+    return FutureBuilder(
+      future: dataManager.getMenu(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<Category> categories = snapshot.data!;
+          return ListView.builder(
+            itemCount: categories.length,
+            itemBuilder: (context, index) {
+              Category category = categories[index];
+              return Column(
+                children: [
+                  Text(category.name),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    itemCount: category.products.length,
+                    itemBuilder: (context, index) {
+                      Product product = category.products[index];
+                      return ProductItem(
+                        product: product,
+                        onAdd: dataManager.addToCart,
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          if (snapshot.hasError) {
+            return Text("Error: ${snapshot.error}");
+          } else {
+            return CircularProgressIndicator();
+          }
+        }
+      },
     );
   }
 }
 
 class ProductItem extends StatelessWidget {
   final Product product;
+  final Function onAdd;
 
-  const ProductItem({super.key, required this.product});
+  const ProductItem({super.key, required this.product, required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +66,8 @@ class ProductItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              "images/black_coffee.png",
+            Image.network(
+              product.imageURL,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
@@ -62,7 +87,12 @@ class ProductItem extends StatelessWidget {
                       Text("\$${product.price}"),
                     ],
                   ),
-                  ElevatedButton(onPressed: () {}, child: Text("Add")),
+                  ElevatedButton(
+                    onPressed: () {
+                      onAdd(product);
+                    },
+                    child: Text("Add"),
+                  ),
                 ],
               ),
             ),
