@@ -12,8 +12,8 @@ class DataManager {
         item.qty++;
         return;
       }
-      cart.add(ItemInCart(product: product, qty: 1));
     }
+    cart.add(ItemInCart(product: product, qty: 1));
   }
 
   void removeFromCart(Product product) {
